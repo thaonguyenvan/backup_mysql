@@ -36,6 +36,8 @@ class Backup(object):
         self.s3_access_key          = settings["backup"]["s3_access_key"]
         self.s3_secret_key          = settings["backup"]["s3_secret_key"]
         self.s3_bucket              = settings["backup"]["s3_bucket"]
+        self.container              = settings["backup"]["container"]
+        self.container_name         = settings["backup"]["container_name"]
 
         self.notify_date = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         self.current_date = datetime.datetime.now().strftime('%Y-%m-%d')
@@ -103,20 +105,39 @@ class Backup(object):
 
 
     def get_command_backup(self, backup_dir):
-        if self.backup_type == "database":
-            if (self.db_password).strip() != '' and self.db_password is not None:
-                backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-            else:
-                backup_command = "mysqldump -u" + self.db_user_name + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-        if self.backup_type == "table":
-            backup_table = (self.tables).strip().replace(",", "")
-            if (self.db_password).strip() != '' and self.db_password is not None:
-                backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-            else:
-                backup_command = "mysqldump -u" + self.db_user_name + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-        if self.backup_type == "all":
-            if (self.db_password).strip() != '' and self.db_password is not None:
-                backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-            else:
-                backup_command = "mysqldump -u" + self.db_user_name + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
-        return backup_command
+        if self.container is True:
+            if self.backup_type == "database":
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            if self.backup_type == "table":
+                backup_table = (self.tables).strip().replace(",", "")
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            if self.backup_type == "all":
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            return backup_command
+        else:
+            if self.backup_type == "database":
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "mysqldump -u" + self.db_user_name + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            if self.backup_type == "table":
+                backup_table = (self.tables).strip().replace(",", "")
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "mysqldump -u" + self.db_user_name + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            if self.backup_type == "all":
+                if (self.db_password).strip() != '' and self.db_password is not None:
+                    backup_command = "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                else:
+                    backup_command = "mysqldump -u" + self.db_user_name + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+            return backup_command
