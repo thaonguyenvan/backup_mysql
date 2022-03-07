@@ -123,6 +123,11 @@ Edit file setting at  `/opt/backup_mysql/settings/settings.json`.
 
 **b. Extended feature:**
 
+- "container": true / false
+    ```
+    MySQL is running on container or not. If settings is true, you must specify other information about container name of running MySQL/MariaDB.
+    ```
+
 - "backup_s3": true / false
     ```
     Backup to s3 or not. If settings is true, you must specify some other information about s3 access and secret key.
