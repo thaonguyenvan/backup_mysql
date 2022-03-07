@@ -108,20 +108,20 @@ class Backup(object):
         if self.container is True:
             if self.backup_type == "database":
                 if (self.db_password).strip() != '' and self.db_password is not None:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
                 else:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " " + self.database + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
             if self.backup_type == "table":
                 backup_table = (self.tables).strip().replace(",", "")
                 if (self.db_password).strip() != '' and self.db_password is not None:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
                 else:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " " + self.database + " " + backup_table + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
             if self.backup_type == "all":
                 if (self.db_password).strip() != '' and self.db_password is not None:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " -p" + "'" + self.db_password + "'" + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
                 else:
-                    backup_command = "docker exec" + self.container_name + "mysqldump -u" + self.db_user_name + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
+                    backup_command = "docker exec" + " " + self.container_name + " " + "mysqldump -u" + self.db_user_name + " " + "--all-databases" + " 2>/dev/null | gzip > " + backup_dir + "/"+ self.output_startw + "_" + self.current_time +".sql.gz"
             return backup_command
         else:
             if self.backup_type == "database":
